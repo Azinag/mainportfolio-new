@@ -38,7 +38,7 @@ export default function Hero() {
               {getTranslation('heroAvailable', language)}
             </div>
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
-              {getTranslation('heroTitle', language)} <span className="text-primary">Noureddine Azinag</span>
+              {getTranslation('heroTitle', language)}
             </h1>
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-light mb-8 text-muted-foreground">
               {getTranslation('heroSubtitle', language)}
