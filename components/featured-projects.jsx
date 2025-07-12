@@ -1,38 +1,69 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ExternalLink, Github, ArrowRight } from 'lucide-react';
-
-const projects = [
-  {
-    title: "E-Commerce Platform",
-    description: "Modern e-commerce website with payment integration, inventory management, and admin dashboard built with Next.js and Stripe.",
-    image: "https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Stripe", "MongoDB"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "Restaurant Website",
-    description: "Beautiful restaurant website with online ordering system, reservation management, and menu showcase.",
-    image: "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "SaaS Dashboard",
-    description: "Comprehensive dashboard for SaaS application with analytics, user management, and real-time data visualization.",
-    image: "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Chart.js", "PostgreSQL"],
-    liveUrl: "#",
-    githubUrl: "#"
-  }
-];
+import { supabase } from '../lib/supabase';
 
 export default function FeaturedProjects() {
+  const [featuredProjects, setFeaturedProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchFeaturedProjects();
+  }, []);
+
+  const fetchFeaturedProjects = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .eq('featured', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching featured projects:', error);
+        setError(error.message);
+      } else {
+        setFeaturedProjects(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching featured projects:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+            <p className="mt-4 text-muted-foreground">Loading projects...</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    return (
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="text-center">
+            <p className="text-red-500">Error loading projects: {error}</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
@@ -52,9 +83,9 @@ export default function FeaturedProjects() {
         </motion.div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {projects.map((project, index) => (
+          {featuredProjects.map((project, index) => (
             <motion.div
-              key={project.title}
+              key={project.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -75,7 +106,7 @@ export default function FeaturedProjects() {
                   {project.description}
                 </p>
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {project.tech.map((tech) => (
+                  {project.tech?.map((tech) => (
                     <span
                       key={tech}
                       className="bg-primary/10 text-primary px-2 py-1 rounded text-xs font-medium"
@@ -85,24 +116,28 @@ export default function FeaturedProjects() {
                   ))}
                 </div>
                 <div className="flex gap-4">
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
-                  >
-                    <ExternalLink size={16} />
-                    Live Demo
-                  </a>
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
-                  >
-                    <Github size={16} />
-                    Code
-                  </a>
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
+                    >
+                      <ExternalLink size={16} />
+                      Live Demo
+                    </a>
+                  )}
+                  {project.githubUrl && (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
+                    >
+                      <Github size={16} />
+                      Code
+                    </a>
+                  )}
                 </div>
               </div>
             </motion.div>

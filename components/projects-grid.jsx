@@ -1,66 +1,64 @@
 "use client";
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { ExternalLink, Github } from 'lucide-react';
-
-const allProjects = [
-  {
-    title: "E-Commerce Platform",
-    description: "Modern e-commerce website with payment integration, inventory management, and admin dashboard built with Next.js and Stripe.",
-    image: "https://images.pexels.com/photos/3184287/pexels-photo-3184287.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Stripe", "MongoDB"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "Restaurant Website",
-    description: "Beautiful restaurant website with online ordering system, reservation management, and menu showcase.",
-    image: "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "SaaS Dashboard",
-    description: "Comprehensive dashboard for SaaS application with analytics, user management, and real-time data visualization.",
-    image: "https://images.pexels.com/photos/265087/pexels-photo-265087.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Chart.js", "PostgreSQL"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "Real Estate Platform",
-    description: "Property listing website with advanced search, virtual tours, and agent management system.",
-    image: "https://images.pexels.com/photos/186077/pexels-photo-186077.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Mapbox", "Supabase"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "Portfolio Website",
-    description: "Creative portfolio website for a photographer with image galleries, client testimonials, and contact forms.",
-    image: "https://images.pexels.com/photos/196644/pexels-photo-196644.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "#",
-    githubUrl: "#"
-  },
-  {
-    title: "Task Management App",
-    description: "Collaborative task management application with real-time updates, team collaboration, and project tracking.",
-    image: "https://images.pexels.com/photos/3184465/pexels-photo-3184465.jpeg?auto=compress&cs=tinysrgb&w=800",
-    tech: ["Next.js", "React", "Tailwind CSS", "Socket.io", "MySQL"],
-    liveUrl: "#",
-    githubUrl: "#"
-  }
-];
+import { supabase } from '../lib/supabase';
 
 export default function ProjectsGrid() {
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('projects')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching projects:', error);
+        setError(error.message);
+      } else {
+        setProjects(data || []);
+      }
+    } catch (err) {
+      console.error('Error fetching projects:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="text-center py-20">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+        <p className="mt-4 text-muted-foreground">Loading projects...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-20">
+        <p className="text-red-500">Error loading projects: {error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-      {allProjects.map((project, index) => (
+      {projects.map((project, index) => (
         <motion.div
-          key={project.title}
+          key={project.id}
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -81,7 +79,7 @@ export default function ProjectsGrid() {
               {project.description}
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
-              {project.tech.map((tech) => (
+              {project.tech?.map((tech) => (
                 <span
                   key={tech}
                   className="bg-primary/10 text-primary px-2 py-1 rounded text-xs font-medium"
@@ -91,24 +89,28 @@ export default function ProjectsGrid() {
               ))}
             </div>
             <div className="flex gap-4">
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
-              >
-                <ExternalLink size={16} />
-                Live Demo
-              </a>
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
-              >
-                <Github size={16} />
-                Code
-              </a>
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
+                >
+                  <ExternalLink size={16} />
+                  Live Demo
+                </a>
+              )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors text-sm"
+                >
+                  <Github size={16} />
+                  Code
+                </a>
+              )}
             </div>
           </div>
         </motion.div>
