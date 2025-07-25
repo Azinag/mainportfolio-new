@@ -6,8 +6,7 @@ import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
 
-const WHATSAPP_NUMBER = '212600000000'; // Replace with agency number
-
+const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '212609343953'
 export default function ContactCTA() {
   const { language } = useLanguage();
   const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}`;
