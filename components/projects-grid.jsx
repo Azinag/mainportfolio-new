@@ -134,9 +134,17 @@ export default function ProjectsGrid() {
               viewport={{ once: true }}
               className="bg-card border border-border rounded-2xl shadow-sm flex flex-col overflow-hidden transition-transform duration-200 hover:scale-[1.02]"
             >
-              {/* App Icon with Colored Background */}
-              <div className={`relative w-full h-40 flex items-center justify-center rounded-t-2xl ${CARD_COLORS[index % CARD_COLORS.length]}`}>
-                <AppWindow size={56} className="" />
+              {/* App Thumbnail / Icon */}
+              <div className={`relative w-full h-40 flex items-center justify-center overflow-hidden rounded-t-2xl ${CARD_COLORS[index % CARD_COLORS.length]}`}>
+                {project.image ? (
+                  <img
+                    src={project.image}
+                    alt={project.title || 'Project thumbnail'}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <AppWindow size={56} className="" />
+                )}
               </div>
 
               {/* Content */}
@@ -207,6 +215,32 @@ export default function ProjectsGrid() {
                     })}
                 </div>
                 )}
+
+                {/* Tech Stack Row */}
+                {(() => {
+                  let techItems = [];
+                  if (Array.isArray(project.tech_stack)) {
+                    techItems = project.tech_stack;
+                  } else if (typeof project.tech_stack === 'string') {
+                    techItems = project.tech_stack
+                      .split(',')
+                      .map((item) => item.trim())
+                      .filter(Boolean);
+                  }
+
+                  return techItems.length > 0 ? (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {techItems.map((tech) => (
+                        <span
+                          key={tech}
+                          className="inline-flex items-center bg-muted text-muted-foreground px-2 py-1 rounded text-xs font-medium"
+                        >
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  ) : null;
+                })()}
 
                 {/* CTA */}
                 <div className="mt-auto">

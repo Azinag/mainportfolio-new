@@ -12,7 +12,9 @@ export default function AdminPage() {
   const [form, setForm] = useState({
     title: '',
     description: '',
+    image: '',
     link: '',
+    tech_stack: '',
     featured: false,
   });
   const [loading, setLoading] = useState(false);
@@ -79,7 +81,9 @@ export default function AdminPage() {
       {
         title: form.title,
         description: form.description,
+        image: form.image,
         link: form.link,
+        tech_stack: form.tech_stack,
         featured: form.featured,
       },
     ]);
@@ -91,7 +95,9 @@ export default function AdminPage() {
       setForm({
         title: '',
         description: '',
+        image: '',
         link: '',
+        tech_stack: '',
         featured: false,
       });
       fetchApps();
@@ -103,7 +109,9 @@ export default function AdminPage() {
     setEditForm({
       title: app.title || '',
       description: app.description || '',
+      image: app.image || '',
       link: app.link || '',
+      tech_stack: app.tech_stack || '',
       featured: !!app.featured,
     });
   };
@@ -114,12 +122,18 @@ export default function AdminPage() {
     setMessage(null);
     // Debug: log the update payload and id
     console.log('Updating app:', editingId, editForm);
-    const { error, data } = await supabase.from('projects').update({
-      title: editForm.title,
-      description: editForm.description,
-      link: editForm.link,
-      featured: editForm.featured,
-    }).eq('id', editingId).select();
+    const { error, data } = await supabase
+      .from('projects')
+      .update({
+        title: editForm.title,
+        description: editForm.description,
+        image: editForm.image,
+        link: editForm.link,
+        tech_stack: editForm.tech_stack,
+        featured: editForm.featured,
+      })
+      .eq('id', editingId)
+      .select();
     setLoading(false);
     // Debug: log the response
     console.log('Update response:', { error, data });
@@ -239,6 +253,19 @@ export default function AdminPage() {
                 />
               </div>
               <div className="mb-4">
+                <label className="block mb-1 font-medium text-neutral-200">Thumbnail Image URL</label>
+                <input
+                  type="url"
+                  name="image"
+                  value={form.image}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
+                  placeholder="https://your-image-url.com/thumbnail.jpg"
+                  required
+                  disabled={loading}
+                />
+              </div>
+              <div className="mb-4">
                 <label className="block mb-1 font-medium text-neutral-200">Reference Link (optional)</label>
                 <input
                   type="url"
@@ -247,6 +274,18 @@ export default function AdminPage() {
                   onChange={handleChange}
                   className="w-full px-4 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
                   placeholder="https://..."
+                  disabled={loading}
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block mb-1 font-medium text-neutral-200">Tech Stack (comma-separated)</label>
+                <input
+                  type="text"
+                  name="tech_stack"
+                  value={form.tech_stack}
+                  onChange={handleChange}
+                  className="w-full px-4 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
+                  placeholder="Next.js, Supabase, Tailwind CSS"
                   disabled={loading}
                 />
               </div>
@@ -303,11 +342,29 @@ export default function AdminPage() {
                           />
                           <input
                             type="url"
+                            name="image"
+                            value={editForm.image}
+                            onChange={handleEditChange}
+                            className="w-full px-3 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
+                            placeholder="Thumbnail image URL"
+                            disabled={loading}
+                          />
+                          <input
+                            type="url"
                             name="link"
                             value={editForm.link}
                             onChange={handleEditChange}
                             className="w-full px-3 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
                             placeholder="https://..."
+                            disabled={loading}
+                          />
+                          <input
+                            type="text"
+                            name="tech_stack"
+                            value={editForm.tech_stack}
+                            onChange={handleEditChange}
+                            className="w-full px-3 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
+                            placeholder="Next.js, Supabase, Tailwind CSS"
                             disabled={loading}
                           />
                           <div className="flex items-center gap-2">
