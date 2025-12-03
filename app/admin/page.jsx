@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LogOut, PlusCircle, List, User } from 'lucide-react';
 
@@ -24,14 +24,46 @@ export default function AdminPage() {
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showFeaturedOnly, setShowFeaturedOnly] = useState(false);
+  const passwordInputRef = useRef(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if (localStorage.getItem(ADMIN_AUTH_KEY) === 'true') {
         setIsAuthed(true);
       }
+      if (!isAuthed && passwordInputRef.current) {
+        passwordInputRef.current.focus();
+      }
     }
-  }, []);
+  }, [isAuthed]);
+
+  // Lightweight keyboard shortcuts for faster navigation
+  useEffect(() => {
+    if (!isAuthed) return;
+
+    const handleKeyDown = (event) => {
+      const tag = event.target.tagName.toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || event.metaKey || event.ctrlKey || event.altKey) return;
+
+      if (event.key === '1') {
+        event.preventDefault();
+        setActiveTab('dashboard');
+      } else if (event.key === '2' || event.key.toLowerCase() === 'a') {
+        event.preventDefault();
+        setEditingId(null);
+        setActiveTab('add');
+      } else if (event.key === '3' || event.key.toLowerCase() === 'l') {
+        event.preventDefault();
+        setEditingId(null);
+        setActiveTab('all');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAuthed]);
 
   useEffect(() => {
     if (isAuthed) fetchApps();
@@ -169,20 +201,54 @@ export default function AdminPage() {
     }
   };
 
+  const handleDuplicate = (app) => {
+    // Prefill the "Add App" form with an existing app so you only tweak & save
+    setForm({
+      title: `${app.title} (copy)`,
+      description: app.description || '',
+      image: app.image || '',
+      link: app.link || '',
+      tech_stack: app.tech_stack || '',
+      featured: !!app.featured,
+    });
+    setActiveTab('add');
+    setEditingId(null);
+  };
+
+  const filteredApps = apps.filter((app) => {
+    const matchesSearch =
+      !searchTerm ||
+      (app.title && app.title.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (app.description && app.description.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesFeatured = !showFeaturedOnly || app.featured;
+    return matchesSearch && matchesFeatured;
+  });
+
   if (!isAuthed) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-900 px-4">
-        <form onSubmit={handleAuth} className="bg-neutral-800 p-8 rounded-xl shadow-md w-full max-w-sm border border-neutral-700">
-          <h2 className="text-2xl font-bold mb-4 text-white">Admin Login</h2>
+        <form onSubmit={handleAuth} className="bg-neutral-800 p-8 rounded-xl shadow-md w-full max-w-sm border border-neutral-700 space-y-4">
+          <div>
+            <h2 className="text-2xl font-bold mb-1 text-white">Admin Login</h2>
+            <p className="text-sm text-neutral-400">
+              Type password and press <span className="font-semibold text-neutral-200">Enter</span>. No mouse needed.
+            </p>
+          </div>
           <input
             type="password"
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full mb-4 px-4 py-2 border border-neutral-700 rounded bg-neutral-900 text-white"
+            ref={passwordInputRef}
+            className="w-full px-4 py-3 border border-neutral-700 rounded-lg bg-neutral-900 text-white text-base"
             required
           />
-          <button type="submit" className="w-full bg-green-600 text-white py-2 rounded font-semibold hover:bg-green-700 transition">Login</button>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white py-2.5 rounded-lg font-semibold hover:bg-green-700 transition text-base"
+          >
+            Login
+          </button>
           {message && <p className={`mt-4 text-${message.type === 'error' ? 'red' : 'green'}-400`}>{message.text}</p>}
         </form>
       </div>
@@ -196,10 +262,46 @@ export default function AdminPage() {
         <div className="mb-10 flex items-center gap-2 text-2xl font-bold tracking-tight">
           <span className="text-green-500">&#9679;</span> Azinag Admin
         </div>
-        <nav className="flex flex-col gap-2 flex-1">
-          <button onClick={() => setActiveTab('dashboard')} className={`flex items-center gap-2 px-4 py-2 rounded transition ${activeTab === 'dashboard' ? 'bg-neutral-800 text-green-400' : 'hover:bg-neutral-800'}`}><User size={18}/> Dashboard</button>
-          <button onClick={() => { setActiveTab('add'); setEditingId(null); }} className={`flex items-center gap-2 px-4 py-2 rounded transition ${activeTab === 'add' ? 'bg-neutral-800 text-green-400' : 'hover:bg-neutral-800'}`}><PlusCircle size={18}/> Add App</button>
-          <button onClick={() => { setActiveTab('all'); setEditingId(null); }} className={`flex items-center gap-2 px-4 py-2 rounded transition ${activeTab === 'all' ? 'bg-neutral-800 text-green-400' : 'hover:bg-neutral-800'}`}><List size={18}/> All Apps</button>
+        <nav className="flex flex-col gap-2 flex-1 text-sm">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`flex items-center justify-between px-4 py-2 rounded transition ${
+              activeTab === 'dashboard' ? 'bg-neutral-800 text-green-400' : 'hover:bg-neutral-800'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <User size={18} /> Dashboard
+            </span>
+            <span className="text-[11px] text-neutral-400">1</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('add');
+              setEditingId(null);
+            }}
+            className={`flex items-center justify-between px-4 py-2 rounded transition ${
+              activeTab === 'add' ? 'bg-neutral-800 text-green-400' : 'hover:bg-neutral-800'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <PlusCircle size={18} /> Add App
+            </span>
+            <span className="text-[11px] text-neutral-400">2 / A</span>
+          </button>
+          <button
+            onClick={() => {
+              setActiveTab('all');
+              setEditingId(null);
+            }}
+            className={`flex items-center justify-between px-4 py-2 rounded transition ${
+              activeTab === 'all' ? 'bg-neutral-800 text-green-400' : 'hover:bg-neutral-800'
+            }`}
+          >
+            <span className="flex items-center gap-2">
+              <List size={18} /> All Apps
+            </span>
+            <span className="text-[11px] text-neutral-400">3 / L</span>
+          </button>
         </nav>
         <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 rounded bg-neutral-800 text-red-400 mt-8 hover:bg-neutral-700 transition"><LogOut size={18}/> Logout</button>
       </aside>
@@ -212,7 +314,15 @@ export default function AdminPage() {
           </div>
         </header>
         <section className="flex-1 p-8 bg-neutral-900">
-          {message && <div className={`mb-6 px-4 py-2 rounded text-center font-medium ${message.type === 'error' ? 'bg-red-900 text-red-300' : 'bg-green-900 text-green-300'}`}>{message.text}</div>}
+          {message && (
+            <div
+              className={`mb-6 px-4 py-2 rounded text-center font-medium ${
+                message.type === 'error' ? 'bg-red-900 text-red-300' : 'bg-green-900 text-green-300'
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
           {activeTab === 'dashboard' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-neutral-800 rounded-xl p-6 border border-neutral-700">
@@ -226,8 +336,18 @@ export default function AdminPage() {
             </div>
           )}
           {activeTab === 'add' && (
-            <form onSubmit={handleSubmit} className="bg-neutral-800 p-8 rounded-xl shadow-md w-full max-w-xl mx-auto border border-neutral-700 mt-8">
-              <h3 className="text-xl font-semibold mb-6 text-white">Add New App</h3>
+            <form
+              onSubmit={handleSubmit}
+              className="bg-neutral-800 p-8 rounded-xl shadow-md w-full max-w-xl mx-auto border border-neutral-700 mt-8 space-y-6"
+            >
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-xl font-semibold text-white">Add New App</h3>
+                  <p className="text-sm text-neutral-400 mt-1">
+                    1. Fill basics → 2. Paste links → 3. Toggle featured → 4. Save.
+                  </p>
+                </div>
+              </div>
               <div className="mb-4">
                 <label className="block mb-1 font-medium text-neutral-200">Title</label>
                 <input
@@ -310,16 +430,45 @@ export default function AdminPage() {
             </form>
           )}
           {activeTab === 'all' && (
-            <div className="max-w-2xl mx-auto mt-8">
-              <h3 className="text-xl font-semibold mb-4 text-white">All Apps</h3>
+            <div className="max-w-3xl mx-auto mt-8">
+              <div className="flex flex-col gap-4 mb-6">
+                <div className="flex items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-xl font-semibold text-white">All Apps</h3>
+                    <p className="text-sm text-neutral-400">
+                      Type to filter. Click Duplicate to spin up a new version in seconds.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col md:flex-row gap-3 md:items-center">
+                  <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by title or description…"
+                    className="flex-1 px-3 py-2 rounded-lg bg-neutral-900 border border-neutral-700 text-sm text-white"
+                  />
+                  <label className="flex items-center gap-2 text-sm text-neutral-200">
+                    <input
+                      type="checkbox"
+                      checked={showFeaturedOnly}
+                      onChange={(e) => setShowFeaturedOnly(e.target.checked)}
+                    />
+                    Featured only
+                  </label>
+                </div>
+              </div>
               {fetching ? (
                 <div className="text-center py-8">
                   <span className="inline-block w-8 h-8 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></span>
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {apps.map((app) => (
-                    <div key={app.id} className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 flex flex-col gap-2">
+                  {filteredApps.map((app) => (
+                    <div
+                      key={app.id}
+                      className="bg-neutral-800 border border-neutral-700 rounded-lg p-4 flex flex-col gap-2"
+                    >
                       {editingId === app.id ? (
                         <form onSubmit={handleEditSubmit} className="space-y-2">
                           <input
@@ -394,8 +543,25 @@ export default function AdminPage() {
                             {app.link && <a href={app.link} target="_blank" rel="noopener noreferrer" className="text-green-400 underline">Link</a>}
                           </div>
                           <div className="flex gap-2 mt-2">
-                            <button onClick={() => handleEdit(app)} className="bg-blue-900 text-blue-300 px-3 py-1 rounded text-xs font-semibold hover:bg-blue-800 transition">Edit</button>
-                            <button onClick={() => handleDelete(app.id)} className="bg-red-900 text-red-300 px-3 py-1 rounded text-xs font-semibold hover:bg-red-800 transition">Delete</button>
+                            <button
+                              onClick={() => handleEdit(app)}
+                              className="bg-blue-900 text-blue-300 px-3 py-1 rounded text-xs font-semibold hover:bg-blue-800 transition"
+                            >
+                              Edit
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleDuplicate(app)}
+                              className="bg-neutral-700 text-neutral-100 px-3 py-1 rounded text-xs font-semibold hover:bg-neutral-600 transition"
+                            >
+                              Duplicate
+                            </button>
+                            <button
+                              onClick={() => handleDelete(app.id)}
+                              className="bg-red-900 text-red-300 px-3 py-1 rounded text-xs font-semibold hover:bg-red-800 transition"
+                            >
+                              Delete
+                            </button>
                           </div>
                         </>
                       )}

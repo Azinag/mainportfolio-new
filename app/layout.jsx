@@ -73,10 +73,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html suppressHydrationWarning>
-      <head>
-        <GoogleAnalytics />
-      </head>
+    <html lang="en" suppressHydrationWarning>
       <body className={inter.className} suppressHydrationWarning>
         <LanguageProvider>
           <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
@@ -90,7 +87,7 @@ export default function RootLayout({ children }) {
             <Toaster />
           </ThemeProvider>
         </LanguageProvider>
-                <Analytics />
+        <Analytics />
       </body>
     </html>
   );

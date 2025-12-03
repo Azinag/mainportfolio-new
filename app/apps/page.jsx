@@ -1,7 +1,6 @@
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import ProjectsGrid from '@/components/projects-grid';
-import AnalyticsTracker from '@/components/analytics-tracker';
 
 export function generateMetadata() {
   return {
@@ -17,7 +16,6 @@ export function generateMetadata() {
 export default function Apps() {
   return (
     <>
-      <AnalyticsTracker />
       <Header />
       <main className="pt-20">
         <div className="container mx-auto px-4 py-16">

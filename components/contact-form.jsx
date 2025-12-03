@@ -8,6 +8,7 @@ import { supabase } from '@/lib/supabase';
 import { event } from '@/lib/analytics';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
+import { WHATSAPP_NUMBER } from '@/lib/utils';
 
 export default function ContactForm() {
   const { language } = useLanguage();
@@ -17,8 +18,6 @@ export default function ContactForm() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const WHATSAPP_NUMBER = '212600000000'; // TODO: Update to real agency number before production
 
   // Format WhatsApp message
   const formatWhatsAppMessage = (data) => {
@@ -141,7 +140,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <h3 className="font-semibold">WhatsApp</h3>
-                <p className="text-muted-foreground">+212 600 000 000</p>
+                <p className="text-muted-foreground">+{WHATSAPP_NUMBER}</p>
               </div>
             </div>
 

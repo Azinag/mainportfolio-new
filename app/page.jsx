@@ -4,9 +4,8 @@ import Industries from '@/components/industries';
 import ContactCTA from '@/components/contact-cta';
 import Footer from '@/components/footer';
 import Header from '@/components/header';
-import AnalyticsTracker from '@/components/analytics-tracker';
-import { useLanguage } from '@/lib/language-context';
-import { getTranslation } from '@/lib/translations';
+import SsgSsrBenefits from '@/components/ssg-ssr-benefits';
+import Pricing from '@/components/pricing';
 
 export function generateMetadata() {
   return {
@@ -22,10 +21,11 @@ export function generateMetadata() {
 export default function Home() {
   return (
     <>
-      <AnalyticsTracker />
       <Header />
       <Hero />
       <Services />
+      <SsgSsrBenefits />
+      <Pricing />
       <Industries />
       <ContactCTA />
       <Footer />

@@ -5,11 +5,10 @@ import Link from 'next/link';
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
-
-const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER || '212609343953'
+import { WHATSAPP_URL_BASE } from '@/lib/utils';
 export default function ContactCTA() {
   const { language } = useLanguage();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}`;
+  const whatsappUrl = WHATSAPP_URL_BASE;
 
   return (
     <section className="py-20 bg-primary/5">

@@ -1,7 +1,6 @@
 "use client";
 import Header from '@/components/header';
 import Footer from '@/components/footer';
-import AnalyticsTracker from '@/components/analytics-tracker';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
 import Link from 'next/link';
@@ -77,7 +76,6 @@ export default function Pricing() {
 
   return (
     <>
-      <AnalyticsTracker />
       <Header />
       <main className="pt-20">
         <div className="container mx-auto px-4 py-16 max-w-3xl">

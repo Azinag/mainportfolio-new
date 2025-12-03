@@ -3,20 +3,17 @@
 import Header from '@/components/header';
 import Footer from '@/components/footer';
 import ContactForm from '@/components/contact-form';
-import AnalyticsTracker from '@/components/analytics-tracker';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
 import { MessageCircle } from 'lucide-react';
-
-const WHATSAPP_NUMBER = '212609343953'; // Replace with agency number
+import { WHATSAPP_URL_BASE } from '@/lib/utils';
 
 export default function Contact() {
   const { language } = useLanguage();
-  const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}`;
+  const whatsappUrl = WHATSAPP_URL_BASE;
 
   return (
     <>
-      <AnalyticsTracker />
       <Header />
       <main className="pt-20">
         <div className="container mx-auto px-4 py-16">

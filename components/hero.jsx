@@ -2,10 +2,9 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import { ArrowRight, MessageCircle, Sparkles } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { event } from '@/lib/analytics';
-// Removed: import { useLanguage } from '@/lib/language-context';
-// Removed: import { getTranslation } from '@/lib/translations';
+import { WHATSAPP_URL_BASE } from '@/lib/utils';
 
 export default function Hero() {
   const trackButtonClick = (buttonName) => {
@@ -35,7 +34,9 @@ export default function Hero() {
       {/* CTA Buttons with glassy neo-skeuomorphic style, original brand colors */}
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <a
-          href="https://wa.me/212600000000?text=Hi%20Azinag%20Team%2C%20I%20want%20to%20build%20a%20fast%20website%20or%20mobile%20app.%20Please%20contact%20me."
+          href={`${WHATSAPP_URL_BASE}?text=${encodeURIComponent(
+            'Hi Azinag Team, I want to build a fast website or mobile app. Please contact me.',
+          )}`}
           target="_blank"
           rel="noopener noreferrer"
           className="relative inline-flex items-center justify-center gap-2 px-9 py-3.5 rounded-full font-semibold text-base md:text-lg text-white bg-gradient-to-r from-red-500 via-red-600 to-red-500 border border-red-300/70 shadow-[0_0_0_1px_rgba(254,226,226,0.6),0_18px_35px_rgba(127,29,29,0.8)] backdrop-blur-[14px] before:absolute before:inset-[1px] before:rounded-full before:bg-gradient-to-r before:from-red-500/70 before:via-red-600/60 before:to-red-500/60 before:opacity-90 hover:before:opacity-100 after:pointer-events-none after:absolute after:inset-x-4 after:top-0.5 after:h-[1px] after:rounded-full after:bg-gradient-to-r after:from-transparent after:via-red-200/70 after:to-transparent hover:shadow-[0_0_0_1px_rgba(254,226,226,0.8),0_22px_40px_rgba(127,29,29,0.95)] hover:-translate-y-0.5 active:translate-y-0 active:shadow-[0_0_0_1px_rgba(254,226,226,1),0_8px_18px_rgba(127,29,29,0.95)] transition-all duration-200 ease-out overflow-hidden"

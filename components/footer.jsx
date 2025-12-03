@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Github, Linkedin, Mail, Heart, MessageCircle } from 'lucide-react';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
+import { WHATSAPP_URL_BASE, WHATSAPP_NUMBER } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -63,7 +64,7 @@ export default function Footer() {
                 <Linkedin size={18} />
               </a>
               <a
-                href="https://wa.me/212600000000"
+                href={WHATSAPP_URL_BASE}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors"
