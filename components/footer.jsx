@@ -1,11 +1,10 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
 import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
-import { WHATSAPP_URL_BASE, WHATSAPP_NUMBER } from '@/lib/utils';
+import { WHATSAPP_URL_BASE } from '@/lib/utils';
 import Link from 'next/link';
 
 export default function Footer() {
@@ -13,86 +12,153 @@ export default function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-muted/30 py-16">
-      <div className="container mx-auto px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          viewport={{ once: true }}
-          className="flex flex-col md:flex-row md:items-start md:justify-between gap-12 text-center md:text-left"
-        >
-          {/* Logo and Description */}
-          <div className="flex-1 flex flex-col items-center md:items-start gap-4">
-            {/* Logo (replace with image if available) */}
-            <Link href="/" className="text-2xl font-bold mb-2">Azinag Web Solutions</Link>
-            <p className="text-muted-foreground max-w-xs">
-              {getTranslation('footerDescription', language)}
+    <footer className="border-t border-border bg-background">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-12 lg:py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 lg:gap-12"
+          >
+            {/* Brand Column */}
+            <div className="col-span-2 md:col-span-1 lg:col-span-1">
+              <Link href="/" className="inline-block mb-4">
+                <span className="text-xl font-semibold">Azinag Web Solutions</span>
+              </Link>
+              <p className="text-sm text-muted-foreground leading-relaxed max-w-xs">
+                {getTranslation('footerDescription', language)}
+              </p>
+            </div>
+
+            {/* Products Column */}
+            <div>
+              <h3 className="text-sm font-semibold mb-4">Products</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link 
+                    href="/apps" 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {getTranslation('apps', language)}
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/pricing" 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {getTranslation('pricingNav', language)}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Resources Column */}
+            <div>
+              <h3 className="text-sm font-semibold mb-4">Resources</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link 
+                    href="/about" 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {getTranslation('about', language)}
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/contact" 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {getTranslation('contact', language)}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Company Column */}
+            <div>
+              <h3 className="text-sm font-semibold mb-4">Company</h3>
+              <ul className="space-y-3">
+                <li>
+                  <Link 
+                    href="/" 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {getTranslation('home', language)}
+                  </Link>
+                </li>
+                <li>
+                  <Link 
+                    href="/about" 
+                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    {getTranslation('about', language)}
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+            {/* Social Column */}
+            <div className="col-span-2 md:col-span-1">
+              <h3 className="text-sm font-semibold mb-4">Connect</h3>
+              <div className="flex flex-wrap gap-3 mb-4">
+                <a
+                  href="https://github.com/azinagweb"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="GitHub"
+                >
+                  <FaGithub size={20} />
+                </a>
+                <a
+                  href="https://linkedin.com/company/azinagweb"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="LinkedIn"
+                >
+                  <FaLinkedin size={20} />
+                </a>
+                <a
+                  href={WHATSAPP_URL_BASE}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="WhatsApp"
+                >
+                  <FaWhatsapp size={20} />
+                </a>
+                <a
+                  href="mailto:noureddine@example.com"
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  aria-label="Email"
+                >
+                  <FaEnvelope size={20} />
+                </a>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-border py-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
+              © {currentYear} Azinag Web Solutions. {getTranslation('footerRights', language)}
             </p>
-          </div>
-
-          {/* Navigation Links */}
-          <div className="flex-1 flex flex-col items-center gap-2 md:items-start">
-            <h3 className="font-semibold mb-2">{getTranslation('footerConnect', language)}</h3>
-            <nav className="flex flex-col gap-2">
-              <Link href="/" className="hover:text-primary transition-colors">{getTranslation('home', language)}</Link>
-              <Link href="/apps" className="hover:text-primary transition-colors">{getTranslation('apps', language)}</Link>
-              <Link href="/about" className="hover:text-primary transition-colors">{getTranslation('about', language)}</Link>
-              <Link href="/contact" className="hover:text-primary transition-colors">{getTranslation('contact', language)}</Link>
-            </nav>
-          </div>
-
-          {/* Socials */}
-          <div className="flex-1 flex flex-col items-center gap-2 md:items-end">
-            <h3 className="font-semibold mb-2">Socials</h3>
-            <div className="flex gap-4 mb-2">
-              <a
-                href="https://github.com/azinagweb"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                aria-label="GitHub"
+            <div className="flex items-center gap-6">
+              <Link 
+                href="/contact" 
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
-                <FaGithub size={18} />
-              </a>
-              <a
-                href="https://linkedin.com/company/azinagweb"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                aria-label="LinkedIn"
-              >
-                <FaLinkedin size={18} />
-              </a>
-              <a
-                href={WHATSAPP_URL_BASE}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors"
-                aria-label="WhatsApp"
-              >
-                <FaWhatsapp size={18} />
-              </a>
-              <a
-                href="mailto:noureddine@example.com"
-                className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-colors"
-                aria-label="Email"
-              >
-                <FaEnvelope size={18} />
-              </a>
-            </div>
-            <div className="text-xs text-muted-foreground">
-              {getTranslation('footerBy', language)}
+                {getTranslation('contact', language)}
+              </Link>
             </div>
           </div>
-        </motion.div>
-        <div className="border-t border-border pt-8 mt-12 text-center">
-          <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-            {getTranslation('footerMade', language)} <Heart size={16} className="text-red-500" /> Azinag Web Solutions
-          </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            © {currentYear} Azinag Web Solutions. {getTranslation('footerRights', language)}
-          </p>
         </div>
       </div>
     </footer>
