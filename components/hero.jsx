@@ -1,19 +1,9 @@
 "use client";
 
-import { motion } from 'framer-motion';
-import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
-import { event } from '@/lib/analytics';
 import { WHATSAPP_URL_BASE } from '@/lib/utils';
 
 export default function Hero() {
-  const trackButtonClick = (buttonName) => {
-    event({
-      action: 'click',
-      category: 'Hero',
-      label: buttonName
-    });
-  };
   return (
     <section className="min-h-[70vh] p-20 pt-22 flex flex-col justify-center items-center bg-background text-foreground px-4 transition-colors duration-300">
       {/* Optional Badge */}
@@ -22,7 +12,7 @@ export default function Hero() {
           🚀 Fast apps for modern businesses
         </span>
       </div>
-      {/* Headline */}
+      {/* Headline - LCP element */}
       <h1 className="text-5xl md:text-7xl font-extrabold text-center mb-6 leading-tight">
         <span className="text-red-500">Fast</span> websites,<br />
         mobile apps & PWAs

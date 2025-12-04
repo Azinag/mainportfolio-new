@@ -24,6 +24,26 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
   },
+  // Target modern browsers only - removes legacy polyfills
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? {
+      exclude: ['error', 'warn'],
+    } : false,
+  },
+  // Modern browser support - removes unnecessary polyfills
+  transpilePackages: [],
+  // Optimize bundle size
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      // Tree shake unused exports
+      config.optimization = {
+        ...config.optimization,
+        usedExports: true,
+        sideEffects: false,
+      };
+    }
+    return config;
+  },
 };
 
 module.exports = nextConfig;
