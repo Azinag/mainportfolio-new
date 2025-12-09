@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from 'framer-motion';
-import { FaGithub, FaLinkedin, FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 import { useLanguage } from '@/lib/language-context';
 import { getTranslation } from '@/lib/translations';
 import { WHATSAPP_URL_BASE } from '@/lib/utils';
@@ -106,24 +106,6 @@ export default function Footer() {
               <h3 className="text-sm font-semibold mb-4">Connect</h3>
               <div className="flex flex-wrap gap-3 mb-4">
                 <a
-                  href="https://github.com/azinagweb"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="GitHub"
-                >
-                  <FaGithub size={20} />
-                </a>
-                <a
-                  href="https://linkedin.com/company/azinagweb"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="LinkedIn"
-                >
-                  <FaLinkedin size={20} />
-                </a>
-                <a
                   href={WHATSAPP_URL_BASE}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -133,7 +115,7 @@ export default function Footer() {
                   <FaWhatsapp size={20} />
                 </a>
                 <a
-                  href="mailto:noureddine@example.com"
+                  href="mailto:contact@azinag.site"
                   className="text-muted-foreground hover:text-foreground transition-colors"
                   aria-label="Email"
                 >

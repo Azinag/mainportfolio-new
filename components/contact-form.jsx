@@ -131,7 +131,7 @@ export default function ContactForm() {
               </div>
               <div>
                 <h3 className="font-semibold">{getTranslation('email', language)}</h3>
-                <p className="text-muted-foreground">noureddine@example.com</p>
+                <p className="text-muted-foreground">contact@azinag.site</p>
               </div>
             </div>
 
