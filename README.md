@@ -2,7 +2,7 @@
 
 Welcome to the codebase for **Azinag Web Solutions**, a modern agency portfolio built with Next.js, Tailwind CSS, and Supabase. This site showcases our services, projects, and contact information, with dynamic project management powered by Supabase.
 
----
+---dd
 
 ## Project Overview
 
