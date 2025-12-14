@@ -192,7 +192,7 @@ export default function ContactForm() {
               <FaWhatsapp size={16} />
             </button>
           </form>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
